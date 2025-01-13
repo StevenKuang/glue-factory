@@ -1,0 +1,34 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "SP+LG MD1500 Eval",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "gluefactory.eval.megadepth1500", 
+            "console": "integratedTerminal",
+            "args": [
+                "--conf",
+                "superpoint+lightglue-official",
+                "--overwrite"
+            ]
+        }
+        // vpython -m gluefactory.train sp+lg_homography \  # experiment name
+        // --conf gluefactory/configs/superpoint+lightglue_homography.yaml
+        {
+            "name": "SP+LG Homography Train",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "gluefactory.train",
+            "console": "integratedTerminal",
+            "args": [
+                "sp+lg_homography",
+                "--conf",
+                "gluefactory/configs/superpoint+lightglue_homography.yaml"
+            ]
+        }
+    ]
+}
