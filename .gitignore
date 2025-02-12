@@ -7,3 +7,4 @@
 /data/
 /outputs/
 __pycache__
+/logs/*

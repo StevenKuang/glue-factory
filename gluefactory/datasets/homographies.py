@@ -55,6 +55,7 @@ class HomographyDataset(BaseDataset):
         "train_size": 100,
         "val_size": 10,
         "shuffle_seed": 0,  # or None to skip
+        "load_full_dataset": False,                                     # whether to load all images or just needed subset
         # image loading
         "grayscale": False,
         "triplet": False,
@@ -108,13 +109,26 @@ class HomographyDataset(BaseDataset):
             image_list = data_dir / conf.image_list
             if not image_list.exists():
                 raise FileNotFoundError(f"Cannot find image list {image_list}.")
-            images = image_list.read_text().rstrip("\n").split("\n")
+            if conf.load_full_dataset:
+                images = image_list.read_text().rstrip("\n").split("\n")
+                logger.info("Found %d images in list file.", len(images))
+            else:
+                total_needed = conf.train_size + conf.val_size
+                with open(image_list, 'r') as f:
+                    images = []
+                    for i, line in enumerate(f):
+                        if i >= total_needed:
+                            break
+                        images.append(line.rstrip('\n'))
+                logger.info("Loaded %d images from list file.", len(images))
             for image in images:
                 if not (image_dir / image).exists():
                     raise FileNotFoundError(image_dir / image)
-            logger.info("Found %d images in list file.", len(images))
         elif isinstance(conf.image_list, omegaconf.listconfig.ListConfig):
             images = conf.image_list.to_container()
+            if not conf.load_full_dataset:
+                total_needed = conf.train_size + conf.val_size
+                images = images[:total_needed]
             for image in images:
                 if not (image_dir / image).exists():
                     raise FileNotFoundError(image_dir / image)

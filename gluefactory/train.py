@@ -16,7 +16,8 @@ from pydoc import locate
 import numpy as np
 import torch
 from omegaconf import OmegaConf
-from torch.cuda.amp import GradScaler, autocast
+from torch.amp import GradScaler
+from torch.amp import autocast
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
@@ -320,7 +321,7 @@ def training(rank, conf, output_dir, args):
     optimizer = optimizer_fn(
         lr_params, lr=conf.train.lr, **conf.train.optimizer_options
     )
-    scaler = GradScaler(enabled=args.mixed_precision is not None)
+    scaler = GradScaler('cuda', enabled=args.mixed_precision is not None)
     logger.info(f"Training with mixed_precision={args.mixed_precision}")
 
     mp_dtype = {
@@ -420,7 +421,7 @@ def training(rank, conf, output_dir, args):
             model.train()
             optimizer.zero_grad()
 
-            with autocast(enabled=args.mixed_precision is not None, dtype=mp_dtype):
+            with autocast('cuda', enabled=args.mixed_precision is not None, dtype=mp_dtype):
                 data = batch_to_device(data, device, non_blocking=True)
                 pred = model(data)
                 losses, _ = loss_fn(pred, data)
@@ -438,7 +439,8 @@ def training(rank, conf, output_dir, args):
                 )
                 do_backward = do_backward > 0
             if do_backward:
-                scaler.scale(loss).backward()
+                with torch.autograd.set_detect_anomaly(True):
+                    scaler.scale(loss).backward(retain_graph=True)
                 if args.detect_anomaly:
                     # Check for params without any gradient which causes
                     # problems in distributed training with checkpointing

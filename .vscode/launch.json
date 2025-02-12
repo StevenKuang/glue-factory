@@ -4,6 +4,23 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+        // current file
+        {
+            "name": "Run RE10k dataset",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "gluefactory.datasets.realestate10k",
+            "console": "integratedTerminal",
+            "args": ["--dotlist", 
+            "data_root=data", 
+            "split=test", 
+            "pairing=skip", // choose between first_all, skip
+            "frame_gap=3",
+            "num_items=100"
+        ]
+        },
+
+
         {
             "name": "SP+LG MD1500 Eval",
             "type": "debugpy",
@@ -15,9 +32,23 @@
                 "superpoint+lightglue-official",
                 "--overwrite"
             ]
-        }
-        // vpython -m gluefactory.train sp+lg_homography \  # experiment name
-        // --conf gluefactory/configs/superpoint+lightglue_homography.yaml
+        },
+        // python -m gluefactory.eval.megadepth1500 --conf superpoint+stickyglue_homography --checkpoint /home/guests/dani_velikova/steven/glue-factory/outputs/training/sp+sg_homography/checkpoint_best.tar
+        {
+            "name": "SP+SG MD1500 Eval Small",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "gluefactory.eval.megadepth1500",
+            "console": "integratedTerminal",
+            "args": [
+                "--conf",
+                "superpoint+stickyglue_homography",
+                "--checkpoint",
+                "/home/guests/dani_velikova/steven/glue-factory/outputs/training/sp+sg_homography_mem_gru/checkpoint_best.tar",
+                "--overwrite"
+            ]
+        },
+        // python -m gluefactory.train sp+lg_homography --conf gluefactory/configs/superpoint+lightglue_homography.yaml
         {
             "name": "SP+LG Homography Train",
             "type": "debugpy",
@@ -29,6 +60,53 @@
                 "--conf",
                 "gluefactory/configs/superpoint+lightglue_homography.yaml"
             ]
+        },
+        // python -m gluefactory.train sp+lg_homography --conf gluefactory/configs/superpoint+lightglue_homography_small.yaml
+        {
+            "name": "SP+LG Homography Train Small",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "gluefactory.train",
+            "console": "integratedTerminal",
+            "args": [
+                "sp+lg_homography",
+                "--conf",
+                "gluefactory/configs/superpoint+lightglue_homography_small.yaml"
+            ]
+        },
+        // python -m gluefactory.train sp+sg_homography --conf gluefactory/configs/superpoint+stickyglue_homography.yaml
+        {
+            "name": "SP+SG Homography Train",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "gluefactory.train",
+            "console": "integratedTerminal",
+            "args": [
+                "sp+sg_homography",
+                "--conf",
+                "gluefactory/configs/superpoint+stickyglue_homography.yaml"
+            ]
+        },
+        // python -m gluefactory.train sp+sg_homography --conf gluefactory/configs/superpoint+stickyglue_homography.yaml
+        {
+            "name": "SP+SG Homography Train Memory Check",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "gluefactory.train",
+            "console": "integratedTerminal",
+            "args": [
+                "sp+sg_homography_mem",
+                "--conf",
+                "gluefactory/configs/superpoint+stickyglue_homography.yaml"
+            ]
+        },
+        {
+            "name": "SP+SG Megadepth Train",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "gluefactory.train",
+            "console": "integratedTerminal",
+            "args": ["sp+sg_megadepth", "--conf", "gluefactory/configs/superpoint+stickyglue_megadepth.yaml"]
         }
     ]
 }

@@ -2,7 +2,7 @@ model:
     name: two_view_pipeline
     extractor:
       name: gluefactory_nonfree.superpoint
-      max_num_keypoints: 2048
+      max_num_keypoints: 512 # 2048
       detection_threshold: 0.0
       nms_radius: 3
     matcher:
@@ -26,4 +26,4 @@ benchmarks:
         ransac_th: 0.5
       model:
         extractor:
-          max_num_keypoints: 1024  # overwrite config above
+          max_num_keypoints: 512 #1024  # overwrite config above
